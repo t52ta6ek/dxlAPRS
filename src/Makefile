@@ -94,18 +94,11 @@ endif
 ifeq ($(PLATFORM), armv6tce)
 OUT		:= $(if $(OUT),$(OUT),../out-armv6tce/)
 EXTLIB  	= lib_armv6/
-# if we are building on the host for the host and not cross-compiling
-ifeq ($(HOSTARCH), $(PLATFORM))
-GFXLIBS		= -lpng -ljpeg
-XLIBS		= $(EXTLIB)libfftw3.a -lXext -lX11
-TARGETS		+=	$(OUT)aprsmap
-else
 GFXLIBS		= $(EXTLIB)libpng15/libpng.a \
 			  $(EXTLIB)libz.a \
 			  $(EXTLIB)libjpeg.a
 XLIBS		= $(EXTLIB)libxcb.so.1 $(EXTLIB)libXdmcp.so.6 $(EXTLIB)libXau.so.6 \
 			  -L$(EXTLIB) -lXext -lX11
-endif
 CFLAGS		+= -march=armv6zk -mfpu=vfp -mfloat-abi=hard -mcpu=arm1176jzf-s
 CFLAGS		+= -Ilib_armv6/libpng15/ -I$(EXTLIB) -I.
 LFLAGS		+=
@@ -113,18 +106,11 @@ TARGETS		+=	$(OUT)aprsmap
 else ifeq ($(PLATFORM), armv6)
 OUT		:= $(if $(OUT),$(OUT),../out-armv6/)
 EXTLIB  	= lib_armv6/
-# if we are building on the host for the host and not cross-compiling
-ifeq ($(HOSTARCH), $(PLATFORM))
-GFXLIBS		= -lpng -ljpeg
-XLIBS		= $(EXTLIB)libfftw3.a -lXext -lX11
-TARGETS		+=	$(OUT)aprsmap
-else
 GFXLIBS		= $(EXTLIB)libpng16/libpng.a \
 			  $(EXTLIB)libz.a \
 			  $(EXTLIB)libjpeg.a
 XLIBS		= $(EXTLIB)libxcb.so.1 $(EXTLIB)libXdmcp.so.6 $(EXTLIB)libXau.so.6 \
 			 -L$(EXTLIB) -lXext -lX11
-endif
 CFLAGS		+= -march=armv6zk -mfpu=vfp -mfloat-abi=hard -mcpu=arm1176jzf-s
 CFLAGS		+= -Ilib_armv6/libpng16/ -I$(EXTLIB) -I.
 LFLAGS		+=
@@ -133,30 +119,25 @@ TARGETS		+=	$(OUT)aprsmap
 else ifeq ($(PLATFORM), armv7hf)
 OUT		:= $(if $(OUT),$(OUT),../out-armv7hf/)
 EXTLIB		= lib_armv7hf/
-# if we are building on the host for the host and not cross-compiling
-ifeq ($(HOSTARCH), $(PLATFORM))
-GFXLIBS		= -lpng -ljpeg
-XLIBS		= $(EXTLIB)libfftw3.a -lXext -lX11
-TARGETS		+=	$(OUT)aprsmap
-else
 GFXLIBS		= $(EXTLIB)libpng.a \
 			  $(EXTLIB)libz.a \
 			  $(EXTLIB)libjpeg.a
 XLIBS		= $(EXTLIB)libxcb.so $(EXTLIB)libXdmcp.so $(EXTLIB)libXau.so \
 			 -L$(EXTLIB) -lXext -lX11
-endif
 CFLAGS		+= -march=armv7-a -mfpu=neon -mfloat-abi=hard
 CFLAGS		+= -I$(EXTLIB)
 LFLAGS		+=
 TARGETS		+=	$(OUT)aprsmap
-# ---------------------- aarch64 (>= rpi 4+) specific -------------------------
+# ---------------------- aarch64 (>= rpi 4) specific --------------------------
 else ifeq ($(PLATFORM), aarch64)
 OUT		:= $(if $(OUT),$(OUT),../out-aarch64/)
 EXTLIB		= lib_aarch64/
 # if we are building on the host for the host and not cross-compiling
 ifeq ($(HOSTARCH), $(PLATFORM))
-GFXLIBS		= -lpng -ljpeg
-XLIBS		= $(EXTLIB)libfftw3.a -lXext -lX11
+GFXLIBS		=  $(EXTLIB)libpng.a \
+			  $(EXTLIB)libz.a \
+			  $(EXTLIB)libjpeg.a
+XLIBS		= -L$(EXTLIB) -lXext -lX11
 TARGETS		+=	$(OUT)aprsmap
 else
 GFXLIBS		=  $(EXTLIB)libpng.a \
@@ -626,6 +607,7 @@ $(OUT)ra02waterfall: $(OBJ_RA02WATERFALL) $(OBJ_COMMON)
 	make $(OUT)$@
 
 diag:
+	@echo "CROSS_COMPILE   : $(CROSS_COMPILE)"
 	@echo "GCCVERSION      : $(GCCVERSION)"
 	@echo "GCCVERSION_GE14 : $(GCCVERSION_GE14)"
 	@echo "HOSTOS          : $(HOSTOS)"
